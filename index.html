@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বাংলা টিভি স্ট্রিমিং - লাইভ চ্যানেল</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1e40af;
+            --primary-dark: #1e3a8a;
+            --secondary: #0f172a;
+            --accent: #3b82f6;
+            --dark: #0a0f1e;
+            --text: #ffffff;
+            --text-gray: #94a3b8;
+            --border: #334155;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            background-attachment: fixed;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-family: 'Tiro Bangla', serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn {
+            padding: 0.6rem 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .search-icon {
+            padding: 0.7rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Video Player */
+        .video-section {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .video-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .current-channel {
+            font-family: 'Tiro Bangla', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .video-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            padding: 0.5rem 0.8rem;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #000;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+        }
+
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--success);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .quality-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .search-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: 'Hind Siliguri', sans-serif;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-gray);
+        }
+
+        /* Channel Title */
+        .section-title {
+            font-family: 'Tiro Bangla', serif;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        /* Channel Grid */
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .channel-card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .channel-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .channel-card.active {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .channel-logo {
+            width: 100%;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            background: white;
+            padding: 0.5rem;
+        }
+
+        .channel-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            display: none;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 3rem;
+            border-top: 2px solid var(--accent);
+        }
+
+        footer p {
+            color: var(--text-gray);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .channel-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 0.8rem;
+            }
+
+            .video-controls {
+                flex-direction: column;
+            }
+
+            .video-info {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-gray);
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid var(--accent);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="back-btn" onclick="goBack()">
+                ⟵ Back
+            </a>
+            <div class="logo">
+                Biostar TV World
+            </div>
+            <div class="search-icon" onclick="toggleSearch()">
+                🔍
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Video Player -->
+        <div class="video-section">
+            <div class="video-header">
+                <h2 class="current-channel" id="currentChannelName">Select a Channel</h2>
+                <div class="video-controls">
+                    <button class="control-btn" onclick="togglePlay()">▶</button>
+                    <button class="control-btn" onclick="toggleMute()">🔊</button>
+                    <button class="control-btn" onclick="toggleFullscreen()">⛶</button>
+                </div>
+            </div>
+            <div class="video-wrapper">
+                <iframe id="videoPlayer" src="" allowfullscreen allow="autoplay"></iframe>
+            </div>
+            <div class="video-info">
+                <div class="live-badge">
+                    <span class="live-dot"></span>
+                    LIVE
+                </div>
+                <div class="quality-badge">HD</div>
+                <button class="control-btn" onclick="copyLink()">🔗 শেয়ার</button>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-container" id="searchContainer" style="display: none;">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="searchInput" placeholder="চ্যানেল খুঁজুন..." oninput="filterChannels()">
+            </div>
+        </div>
+
+        <!-- Channel Grid -->
+        <h3 class="section-title">📺 সকল চ্যানেল</h3>
+        <div class="channel-grid" id="channelGrid"></div>
+        <div class="no-results" id="noResults">❌ কোন চ্যানেল পাওয়া যায়নি</div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© Biostar TV World. All Rights Reserved 2026</p>
+    </footer>
+
+    <script>
+        // Biostar TV Channel Database
+        const channels = [
+            // Sports Channels
+            { id: "bein-sports-1", name: "beIN Sports 1", logo: "https://i.ibb.co/XCR8GLs/bein-sports-1.png", category: "Sports" },
+            { id: "bein-sports-2", name: "beIN Sports 2", logo: "https://i.ibb.co/mR9Xz4v/bein-sports-2.png", category: "Sports" },
+            { id: "bein-sports-3", name: "beIN Sports 3", logo: "https://i.ibb.co/Vtp2PL4/bein-sports-3.png", category: "Sports" },
+            { id: "sony-six", name: "Sony Six", logo: "https://i.ibb.co/7J8YNmR/sony-six.png", category: "Sports" },
+            { id: "star-sports-1", name: "Star Sports 1", logo: "https://i.ibb.co/qnzxBbZ/star-sports-1.png", category: "Sports" },
+            { id: "star-sports-2", name: "Star Sports 2", logo: "https://i.ibb.co/LYm2YNf/star-sports-2.png", category: "Sports" },
+            { id: "sky-sports", name: "Sky Sports", logo: "https://i.ibb.co/8djVjVy/sky-sports.png", category: "Sports" },
+            { id: "willow-hd", name: "Willow HD", logo: "https://i.ibb.co/pdVbWJZ/willow.png", category: "Sports" },
+            { id: "t-sports", name: "T Sports", logo: "https://i.ibb.co/JB2pVyH/t-sports.png", category: "Sports" },
+            { id: "gazi-tv", name: "Gazi TV", logo: "https://i.ibb.co/X5P5LQf/gazi-tv.png", category: "Sports" },
+            
+            // Bangladesh News
+            { id: "btv-news", name: "BTV News", logo: "https://i.ibb.co/7S7z3qy/btv-news.png", category: "Bangladesh News" },
+            { id: "jamuna-tv", name: "Jamuna TV", logo: "https://i.ibb.co/9h6LW8Y/jamuna-tv.png", category: "Bangladesh News" },
+            { id: "channel-24", name: "Channel 24", logo: "https://i.ibb.co/bWQ2VDN/channel-24.png", category: "Bangladesh News" },
+            { id: "somoy-tv", name: "Somoy TV", logo: "https://i.ibb.co/ZVwrdGR/somoy-tv.png", category: "Bangladesh News" },
+            { id: "independent-tv", name: "Independent TV", logo: "https://i.ibb.co/NyZqLfk/independent.png", category: "Bangladesh News" },
+            { id: "ekattor-tv", name: "Ekattor TV", logo: "https://i.ibb.co/W6xqYdh/ekattor.png", category: "Bangladesh News" },
+            { id: "news24", name: "News24", logo: "https://i.ibb.co/YDmjKLy/news24.png", category: "Bangladesh News" },
+            { id: "dbc-news", name: "DBC News", logo: "https://i.ibb.co/8BhNm3z/dbc.png", category: "Bangladesh News" },
+            
+            // Bangladesh Entertainment
+            { id: "atn-bangla", name: "ATN Bangla", logo: "https://i.ibb.co/Yf8gYcN/atn-bangla.png", category: "Bangladesh TV" },
+            { id: "channel-i", name: "Channel i", logo: "https://i.ibb.co/7KdJL9C/channel-i.png", category: "Bangladesh TV" },
+            { id: "rtv", name: "RTV", logo: "https://i.ibb.co/PgKmHFq/rtv.png", category: "Bangladesh TV" },
+            { id: "ntv", name: "NTV", logo: "https://i.ibb.co/Kq2TZkh/ntv.png", category: "Bangladesh TV" },
+            { id: "boishakhi-tv", name: "Boishakhi TV", logo: "https://i.ibb.co/xSjBCZc/boishakhi.png", category: "Bangladesh TV" },
+            { id: "bangla-vision", name: "Bangla Vision", logo: "https://i.ibb.co/RSd5d5J/bangla-vision.png", category: "Bangladesh TV" },
+            { id: "maasranga", name: "Maasranga TV", logo: "https://i.ibb.co/0BwWPGz/maasranga.png", category: "Bangladesh TV" },
+            { id: "satv", name: "SA TV", logo: "https://i.ibb.co/f4wQfyV/satv.png", category: "Bangladesh TV" },
+            { id: "asian-tv", name: "Asian TV", logo: "https://i.ibb.co/LpyRQNg/asian-tv.png", category: "Bangladesh TV" },
+            
+            // International News
+            { id: "al-jazeera", name: "Al Jazeera", logo: "https://i.ibb.co/Kq0rG3Q/al-jazeera.png", category: "International News" },
+            { id: "bbc-news", name: "BBC News", logo: "https://i.ibb.co/9gD7fYv/bbc.png", category: "International News" },
+            { id: "cnn", name: "CNN", logo: "https://i.ibb.co/7XgcVVY/cnn.png", category: "International News" },
+            { id: "fox-news", name: "Fox News", logo: "https://i.ibb.co/KqV7g7M/fox.png", category: "International News" },
+            { id: "sky-news", name: "Sky News", logo: "https://i.ibb.co/m0LZ6Kg/sky-news.png", category: "International News" },
+            { id: "dw", name: "DW News", logo: "https://i.ibb.co/gFkKqjL/dw.png", category: "International News" },
+            { id: "france24", name: "France 24", logo: "https://i.ibb.co/VTx3pYK/france24.png", category: "International News" },
+            
+            // Arabic Channels
+            { id: "al-arabiya", name: "Al Arabiya", logo: "https://i.ibb.co/ZVDdKWs/al-arabiya.png", category: "Arabic" },
+            { id: "mbc", name: "MBC", logo: "https://i.ibb.co/3kxqY8y/mbc.png", category: "Arabic" },
+            { id: "rotana", name: "Rotana", logo: "https://i.ibb.co/4KMzKrJ/rotana.png", category: "Arabic" },
+            
+            // Kids
+            { id: "cartoon-network", name: "Cartoon Network", logo: "https://i.ibb.co/7JvxXPY/cn.png", category: "Kids" },
+            { id: "nick", name: "Nickelodeon", logo: "https://i.ibb.co/zNZYBLq/nick.png", category: "Kids" },
+            { id: "pogo", name: "Pogo", logo: "https://i.ibb.co/2sV3Jhm/pogo.png", category: "Kids" },
+            
+            // Movies
+            { id: "sony-max", name: "Sony Max", logo: "https://i.ibb.co/ZXRm4vD/sony-max.png", category: "Movies" },
+            { id: "star-gold", name: "Star Gold", logo: "https://i.ibb.co/WD6qbLY/star-gold.png", category: "Movies" },
+            { id: "zee-cinema", name: "Zee Cinema", logo: "https://i.ibb.co/vXRj1yH/zee-cinema.png", category: "Movies" },
+            
+            // Indian Entertainment
+            { id: "colors", name: "Colors", logo: "https://i.ibb.co/TmGNWkN/colors.png", category: "Indian TV" },
+            { id: "star-plus", name: "Star Plus", logo: "https://i.ibb.co/C7D0bFS/star-plus.png", category: "Indian TV" },
+            { id: "zee-tv", name: "Zee TV", logo: "https://i.ibb.co/hCv6HGW/zee-tv.png", category: "Indian TV" },
+            { id: "sony-tv", name: "Sony TV", logo: "https://i.ibb.co/QYQF8Lw/sony-tv.png", category: "Indian TV" },
+        ];
+
+        let currentChannel = null;
+        let filteredChannels = [...channels];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderChannels();
+            // Auto-play first channel
+            if (channels.length > 0) {
+                playChannel(channels[0]);
+            }
+        });
+
+        // Render Channels
+        function renderChannels() {
+            const grid = document.getElementById('channelGrid');
+            const noResults = document.getElementById('noResults');
+
+            if (filteredChannels.length === 0) {
+                grid.innerHTML = '';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            noResults.style.display = 'none';
+
+            grid.innerHTML = filteredChannels.map(channel => `
+                <div class="channel-card ${currentChannel && currentChannel.id === channel.id ? 'active' : ''}" 
+                     onclick='playChannel(${JSON.stringify(channel)})'>
+                    <img src="${channel.logo}" alt="${channel.name}" class="channel-logo" 
+                         onerror="this.src='https://via.placeholder.com/150?text=${encodeURIComponent(channel.name)}'">
+                    <div class="channel-name">${channel.name}</div>
+                </div>
+            `).join('');
+        }
+
+        // Play Channel
+        function playChannel(channel) {
+            currentChannel = channel;
+            const biostarUrl = `https://biostar-tv-world.vercel.app/?id=${channel.id}`;
+            
+            document.getElementById('videoPlayer').src = biostarUrl;
+            document.getElementById('currentChannelName').textContent = channel.name;
+            
+            renderChannels();
+            
+            // Scroll to video
+            document.querySelector('.video-section').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+
+        // Filter Channels
+        function filterChannels() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            filteredChannels = channels.filter(channel => 
+                channel.name.toLowerCase().includes(searchTerm) ||
+                channel.category.toLowerCase().includes(searchTerm)
+            );
+            
+            renderChannels();
+        }
+
+        // Toggle Search
+        function toggleSearch() {
+            const searchContainer = document.getElementById('searchContainer');
+            searchContainer.style.display = searchContainer.style.display === 'none' ? 'block' : 'none';
+            if (searchContainer.style.display === 'block') {
+                document.getElementById('searchInput').focus();
+            }
+        }
+
+        // Video Controls
+        function togglePlay() {
+            alert('প্লেয়ার কন্ট্রোল Biostar TV সার্ভারে আছে');
+        }
+
+        function toggleMute() {
+            alert('মিউট কন্ট্রোল Biostar TV সার্ভারে আছে');
+        }
+
+        function toggleFullscreen() {
+            const iframe = document.getElementById('videoPlayer');
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            }
+        }
+
+        function copyLink() {
+            if (currentChannel) {
+                const link = window.location.href + '?id=' + currentChannel.id;
+                navigator.clipboard.writeText(link).then(() => {
+                    alert('লিংক কপি হয়েছে! ✓');
+                });
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        // URL Parameter Support
+        const urlParams = new URLSearchParams(window.location.search);
+        const channelId = urlParams.get('id');
+        if (channelId) {
+            const channel = channels.find(c => c.id === channelId);
+            if (channel) {
+                playChannel(channel);
+            }
+        }
+    </script>
+</body>
+</html>
